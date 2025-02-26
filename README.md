@@ -73,6 +73,7 @@ This project is licensed under the MIT License.
 
 ✨ **LumaBot is part of the 'Star 🌟 This Repo' anime magic!** ✨
 
+![Anime](https://animemagic.vercel.app/anime-image?t=123456)
 
 
 
