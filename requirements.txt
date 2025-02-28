@@ -4,7 +4,9 @@ aiosignal==1.3.2
 annotated-types==0.7.0
 anyio==4.8.0
 attrs==25.1.0
+certifi==2025.1.31
 cffi==1.17.1
+charset-normalizer==3.4.1
 click==8.1.8
 colorama==0.4.6
 cryptography==44.0.1
@@ -18,10 +20,13 @@ propcache==0.3.0
 pycparser==2.22
 pydantic==2.10.6
 pydantic_core==2.27.2
+PyJWT==2.10.1
 python-dotenv==1.0.1
+requests==2.32.3
 sniffio==1.3.1
 starlette==0.45.3
 typing_extensions==4.12.2
 uritemplate==4.1.1
+urllib3==2.3.0
 uvicorn==0.34.0
 yarl==1.18.3

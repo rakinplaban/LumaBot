@@ -33,13 +33,26 @@ def verify_signature(payload, signature):
     return hmac.compare_digest(f"sha256={mac}", signature)
 
 
-with open("lumabot.pem", "rb") as key_file:
+with open(PRIVATE_KEY_PATH, "rb") as key_file:
     private_key = key_file.read()
 
-# def load_private_key():
-#     """Reads the private key from file"""
-#     with open(PRIVATE_KEY_PATH, "r") as key_file:
-#         return key_file.read()
+
+
+def installation_id_retriever(headers):
+    url = "https://api.github.com/app/installations"
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        installations = response.json()
+        if installations:
+            installation_id = installations[0]["id"]  # Extract the first installation ID
+            print(f"Installation ID: {installation_id}")
+            return installation_id
+        else:
+            print("No installations found.")
+    else:
+        print(f"Error: {response.status_code} - {response.json()}")
+
 
 async def get_installation_token():
     """Generates a JWT and fetches an installation token for LumaBot"""
@@ -56,9 +69,11 @@ async def get_installation_token():
     jwt_token = jwt.encode(payload, private_key, algorithm="RS256")
     print("Generated JWT:", jwt_token)
 
-    url = f"https://api.github.com/app/installations/60287794/access_tokens"
+    # url = f"https://api.github.com/app/installations/60287794/access_tokens"
     headers = {"Authorization": f"Bearer {jwt_token}", "Accept": "application/vnd.github+json"}
-    
+    installation_id = installation_id_retriever(headers)
+    url = f"https://api.github.com/app/installations/{installation_id}/access_tokens"
+
     response = requests.post(url, headers=headers)
     response.raise_for_status()
     return response.json()["token"]
@@ -91,7 +106,7 @@ async def webhook_handler(request: Request, x_hub_signature_256: str = Header(No
             # ✅ LumaBot now posts comments (not your account)
             await gh.post(
                 comment_url,
-                data={"body": f"Hello @{issue['user']['login']}! I am LumaBot. Thank you for opening this issue! ❤️"},
+                data={"body": f"Hey @{issue['user']['login']}! Thank you for opening this issue! 💖 I'll make sure it's seen!"},
                 accept="application/vnd.github+json",
             )
 
