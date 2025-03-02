@@ -18,7 +18,7 @@ load_dotenv(verbose=True)
 APP_ID = os.getenv("APP_ID")  # Set in environment variables
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")  # Set in environment variables
 PRIVATE_KEY_PATH = os.getenv("PRIVATE_KEY_PATH")  # Path to your .pem file
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN") 
+
 
 # print(f"APP_ID: {APP_ID}")
 # print(f"WEBHOOK_SECRET: {WEBHOOK_SECRET}")
@@ -80,7 +80,7 @@ async def get_installation_token():
 
 
 
-@app.post("/")
+@app.post("/webhook")
 async def webhook_handler(request: Request, x_hub_signature_256: str = Header(None)):
     body = await request.body()
     secret = WEBHOOK_SECRET.encode()  # Convert to bytes
@@ -92,9 +92,7 @@ async def webhook_handler(request: Request, x_hub_signature_256: str = Header(No
     async with aiohttp.ClientSession() as session:
         # 🔥 Fetch LumaBot's token dynamically
         GITHUB_TOKEN = await get_installation_token()
-        # private_key = load_private_key()
-        # decoded = jwt.decode(GITHUB_TOKEN, private_key, algorithms=["RS256"], options={"verify_signature": False})
-        # print("Decoded JWT:", decoded)
+        
 
         gh = gh_aiohttp.GitHubAPI(session, "LumaBot", oauth_token=GITHUB_TOKEN)
 
@@ -106,7 +104,7 @@ async def webhook_handler(request: Request, x_hub_signature_256: str = Header(No
             # ✅ LumaBot now posts comments (not your account)
             await gh.post(
                 comment_url,
-                data={"body": f"Hey @{issue['user']['login']}! Thank you for opening this issue! 💖 I'll make sure it's seen!"},
+                data={"body": f"Hey @{issue['user']['login']}! Thank you for opening this issue! 💖 I'll make sure it's seen!\n FYI @{repo['owner']['login']}"},
                 accept="application/vnd.github+json",
             )
 
