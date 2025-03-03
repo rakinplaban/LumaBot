@@ -1,3 +1,7 @@
+from fastapi import FastAPI, Request, Header, HTTPException
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 import os
 import hmac
 import hashlib
@@ -6,7 +10,6 @@ import uvicorn
 import jwt
 import requests
 import time
-from fastapi import FastAPI, Request, Header, HTTPException
 from gidgethub import aiohttp as gh_aiohttp
 from gidgethub import sansio
 from dotenv import load_dotenv
@@ -20,12 +23,16 @@ WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")  # Set in environment variables
 PRIVATE_KEY_PATH = os.getenv("PRIVATE_KEY_PATH")  # Path to your .pem file
 
 
-# print(f"APP_ID: {APP_ID}")
-# print(f"WEBHOOK_SECRET: {WEBHOOK_SECRET}")
-# print(f"PRIVATE_KEY_PATH: {PRIVATE_KEY_PATH}")
-
 app = FastAPI()
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/destination", StaticFiles(directory="destination"), name="destination")
+
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/", response_class=HTMLResponse)
+def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 # Verify the webhook signature
 def verify_signature(payload, signature):
@@ -62,14 +69,11 @@ async def get_installation_token():
         "iss": APP_ID,  # GitHub App ID
     }
 
-    # Load private key from file
-    # private_key = load_private_key()
 
     # Create JWT
     jwt_token = jwt.encode(payload, private_key, algorithm="RS256")
     print("Generated JWT:", jwt_token)
 
-    # url = f"https://api.github.com/app/installations/60287794/access_tokens"
     headers = {"Authorization": f"Bearer {jwt_token}", "Accept": "application/vnd.github+json"}
     installation_id = installation_id_retriever(headers)
     url = f"https://api.github.com/app/installations/{installation_id}/access_tokens"

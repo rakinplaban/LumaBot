@@ -1,0 +1,19 @@
+body{
+    background-color: bisque;
+    background-image: url("/destination/lumasroom.webp");
+    background-repeat: no-repeat;
+    background-size: cover;  
+    background-position: center; 
+    color: rgb(250, 5, 86);
+}
+
+#image{
+    opacity: 0.5;
+    position:absolute;
+    margin-left: 50%;
+}
+
+footer{
+    font-weight: bold;
+}
+
