@@ -19,6 +19,9 @@ Konnichiwa!~ 💕 I'm Luma (ルマ), your friendly GitHub assistant! I'm here to
 2. When a new issue is created, it comments with a thank-you message.
 3. It also adds a ❤️ reaction to the issue.
 
+## How to configure
+Follow this link 👉🏼 https://github.com/apps/luma-bot-1 and click install.
+
 ## Installation
 ### Prerequisites
 - Python 3.8+
